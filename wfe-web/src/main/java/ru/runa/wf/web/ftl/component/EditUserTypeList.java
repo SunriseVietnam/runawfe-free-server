@@ -111,24 +111,26 @@ public class EditUserTypeList extends AbstractUserTypeList implements FormCompon
     }
 
     public static String getReplace(String inputComponentHtml) {
-        StringBuilder result = new StringBuilder();
         char[] array = inputComponentHtml.toCharArray();
-        for (int i = 0; i < array.length; ++i) {
-            if (array[i] == '"') {
-                result.append('\'');
-                continue;
-            } else if (array[i] == '\n') {
-                continue;// пропускаем символ новой строки
-            } else if (array[i] == '[' && i < array.length - 1) {// Заменяем "[]" на "{}" после обработки всех символов
-                if (array[i + 1] == ']') {
-                    result.append('{');
-                    result.append('}');
-                    ++i;
-                    continue;
-                }
+        // Создаем новый массив для результата
+        char[] resultArray = new char[array.length];
+        int resultIndex = 0;
+
+        for (int i = 0; i < array.length; i++) {
+            char currentChar = array[i];
+
+            if (currentChar == '"') {
+                resultArray[resultIndex++] = '\''; // Заменяем на апостроф
+            } else if (currentChar == '\n') {
+            } else if (currentChar == '[' && i < array.length - 1 && array[i + 1] == ']') {
+                resultArray[resultIndex++] = '{';
+                resultArray[resultIndex++] = '}';
+                i++; // Пропускаем следующий символ ']'
+            } else {
+                resultArray[resultIndex++] = currentChar;
             }
-            result.append(array[i]);
         }
-        return result.toString();
+
+        return new String(resultArray, 0, resultIndex);
     }
 }
